@@ -20,12 +20,15 @@ import android.content.Context;
 import android.content.Loader;
 
 import rx.Observable;
-import rx.Subscriber;
+import rx.Observer;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class RxLoader<T> extends Loader<T> {
+public class RxLoader<T> extends Loader<T> implements Observer<T> {
 
     private final Observable<T> mObservable;
+    private Subscription mSubscription;
     private Throwable mError;
     private T mDataCache;
 
@@ -43,6 +46,23 @@ public class RxLoader<T> extends Loader<T> {
         }
     }
 
+    @Override
+    public void onCompleted() {
+        unsubscribe();
+    }
+
+    @Override
+    public void onError(Throwable e) {
+        mError = e;
+        deliverResult(null);
+        unsubscribe();
+    }
+
+    @Override
+    public void onNext(T t) {
+        deliverResult(t);
+    }
+
     public Throwable getError() {
         return mError;
     }
@@ -50,6 +70,7 @@ public class RxLoader<T> extends Loader<T> {
     @Override
     protected void onStartLoading() {
         super.onStartLoading();
+        subscribe();
 
         if (mDataCache != null) {
             // send cached data immediately
@@ -64,7 +85,21 @@ public class RxLoader<T> extends Loader<T> {
     @Override
     protected void onStopLoading() {
         super.onStopLoading();
-        cancelLoad();
+        unsubscribe();
+    }
+
+    @Override
+    protected boolean onCancelLoad() {
+        super.onCancelLoad();
+        unsubscribe();
+        return mSubscription == null || mSubscription.isUnsubscribed();
+    }
+
+    @Override
+    protected void onForceLoad() {
+        super.onForceLoad();
+        unsubscribe();
+        subscribe();
     }
 
     @Override
@@ -75,28 +110,16 @@ public class RxLoader<T> extends Loader<T> {
         mError = null;
     }
 
-    @Override
-    protected void onForceLoad() {
-        super.onForceLoad();
+    private void subscribe() {
+        mSubscription = mObservable
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this);
+    }
 
-        mObservable.subscribeOn(Schedulers.io()).subscribe(new Subscriber<T>() {
-
-            @Override
-            public void onCompleted() {
-                unsubscribe();
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                mError = e;
-                deliverResult(null);
-                unsubscribe();
-            }
-
-            @Override
-            public void onNext(T t) {
-                deliverResult(t);
-            }
-        });
+    private void unsubscribe() {
+        if (mSubscription != null && !mSubscription.isUnsubscribed()) {
+            mSubscription.unsubscribe();
+        }
     }
 }

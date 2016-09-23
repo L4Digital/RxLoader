@@ -20,7 +20,7 @@ apply plugin: 'maven-publish'
 
 def libraryArtifact = 'rxloader'
 def libraryGroup = 'com.l4digital.rxloader'
-def libraryVersion = '1.0.0'
+def libraryVersion = '1.0.1'
 
 android {
     compileSdkVersion 24
@@ -39,6 +39,7 @@ android {
 
 dependencies {
     compile 'io.reactivex:rxjava:1.1.7'
+    compile 'io.reactivex:rxandroid:1.2.1'
 }
 
 task sourcesJar(type: Jar) {

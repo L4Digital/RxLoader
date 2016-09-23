@@ -10,7 +10,7 @@ RxLoader caches the data emitted by your Observable across orientation changes b
 ####Gradle:
 ~~~groovy
 dependencies {
-    compile 'com.l4digital.rxloader:rxloader:1.0.0'
+    compile 'com.l4digital.rxloader:rxloader:1.0.1'
 }
 ~~~
 
@@ -19,7 +19,7 @@ dependencies {
 <dependency>
   <groupId>com.l4digital.rxloader</groupId>
   <artifactId>rxloader</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
 </dependency>
 ~~~
 
