@@ -18,6 +18,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'maven-publish'
 
+def libraryName = 'RxLoader'
 def libraryArtifact = 'rxloader'
 def libraryGroup = 'com.l4digital.rxloader'
 def libraryVersion = '1.0.1'
@@ -91,7 +92,7 @@ bintray {
     publications = ['aar', 'java']
 
     pkg {
-        name = libraryArtifact
+        name = libraryName
         repo = 'maven'
         userOrg = 'l4digital'
         licenses = ['Apache-2.0']
