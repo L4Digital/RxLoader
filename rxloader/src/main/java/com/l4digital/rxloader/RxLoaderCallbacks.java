@@ -26,29 +26,35 @@ import rx.subjects.BehaviorSubject;
 public class RxLoaderCallbacks<T> implements LoaderManager.LoaderCallbacks<T> {
 
     private final RxLoader<T> mLoader;
-    private final BehaviorSubject<T> mSubject;
+    private BehaviorSubject<T> mSubject;
 
     public Observable<T> getObservable() {
-        return mSubject.asObservable();
+        return createSubject().asObservable();
     }
 
     public RxLoaderCallbacks(RxLoader<T> loader) {
-        mSubject = BehaviorSubject.create();
         mLoader = loader;
     }
 
     @Override
     public RxLoader<T> onCreateLoader(int id, Bundle bundle) {
+        createSubject();
         return mLoader;
     }
 
     @Override
     public void onLoadFinished(Loader<T> loader, T t) {
-        if (loader instanceof RxLoader) {
-            Throwable error = ((RxLoader) loader).getError();
+        if (loader instanceof RxLoader && t == null) {
+            RxLoader rxLoader = (RxLoader) loader;
+            Throwable error = rxLoader.getError();
 
             if (error != null) {
                 mSubject.onError(error);
+                return;
+            }
+
+            if (rxLoader.hasCompleted()) {
+                mSubject.onCompleted();
                 return;
             }
         }
@@ -59,5 +65,13 @@ public class RxLoaderCallbacks<T> implements LoaderManager.LoaderCallbacks<T> {
     @Override
     public void onLoaderReset(Loader<T> loader) {
         mSubject.onCompleted();
+    }
+
+    private BehaviorSubject<T> createSubject() {
+        if (mSubject == null || mSubject.hasCompleted()) {
+            mSubject = BehaviorSubject.create();
+        }
+
+        return mSubject;
     }
 }

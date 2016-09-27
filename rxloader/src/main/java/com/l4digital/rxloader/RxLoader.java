@@ -30,6 +30,7 @@ public class RxLoader<T> extends Loader<T> implements Observer<T> {
     private final Observable<T> mObservable;
     private Subscription mSubscription;
     private Throwable mError;
+    private boolean mCompleted;
     private T mDataCache;
 
     public RxLoader(Context context, Observable<T> observable) {
@@ -48,6 +49,8 @@ public class RxLoader<T> extends Loader<T> implements Observer<T> {
 
     @Override
     public void onCompleted() {
+        mCompleted = true;
+        deliverResult(null);
         unsubscribe();
     }
 
@@ -67,10 +70,13 @@ public class RxLoader<T> extends Loader<T> implements Observer<T> {
         return mError;
     }
 
+    public boolean hasCompleted() {
+        return mCompleted;
+    }
+
     @Override
     protected void onStartLoading() {
         super.onStartLoading();
-        subscribe();
 
         if (mDataCache != null) {
             // send cached data immediately
@@ -79,6 +85,8 @@ public class RxLoader<T> extends Loader<T> implements Observer<T> {
 
         if (takeContentChanged() || mDataCache == null) {
             forceLoad();
+        } else {
+            subscribe();
         }
     }
 
@@ -108,9 +116,12 @@ public class RxLoader<T> extends Loader<T> implements Observer<T> {
         onStopLoading();
         mDataCache = null;
         mError = null;
+        mCompleted = false;
     }
 
     private void subscribe() {
+        mError = null;
+        mCompleted = false;
         mSubscription = mObservable
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
