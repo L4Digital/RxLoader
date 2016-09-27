@@ -19,23 +19,28 @@ package com.l4digital.rxloader;
 import android.content.Context;
 import android.content.Loader;
 
-import rx.Observable;
-import rx.Observer;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subscribers.DisposableSubscriber;
 
-public class RxLoader<T> extends Loader<T> implements Observer<T> {
+public class RxLoader<T> extends Loader<T> {
 
-    private final Observable<T> mObservable;
-    private Subscription mSubscription;
-    private Throwable mError;
-    private boolean mCompleted;
+    private final Flowable<T> mFlowable;
+    private DisposableSubscriber<T> mSubscriber;
+    private Throwable mThrowable;
+    private boolean mComplete;
     private T mDataCache;
 
     public RxLoader(Context context, Observable<T> observable) {
+        this(context, observable.toFlowable(BackpressureStrategy.LATEST));
+    }
+
+    public RxLoader(Context context, Flowable<T> flowable) {
         super(context);
-        mObservable = observable;
+        mFlowable = flowable;
     }
 
     @Override
@@ -47,31 +52,12 @@ public class RxLoader<T> extends Loader<T> implements Observer<T> {
         }
     }
 
-    @Override
-    public void onCompleted() {
-        mCompleted = true;
-        deliverResult(null);
-        unsubscribe();
-    }
-
-    @Override
-    public void onError(Throwable e) {
-        mError = e;
-        deliverResult(null);
-        unsubscribe();
-    }
-
-    @Override
-    public void onNext(T t) {
-        deliverResult(t);
-    }
-
     public Throwable getError() {
-        return mError;
+        return mThrowable;
     }
 
-    public boolean hasCompleted() {
-        return mCompleted;
+    public boolean hasComplete() {
+        return mComplete;
     }
 
     @Override
@@ -93,20 +79,20 @@ public class RxLoader<T> extends Loader<T> implements Observer<T> {
     @Override
     protected void onStopLoading() {
         super.onStopLoading();
-        unsubscribe();
+        dispose();
     }
 
     @Override
     protected boolean onCancelLoad() {
         super.onCancelLoad();
-        unsubscribe();
-        return mSubscription == null || mSubscription.isUnsubscribed();
+        dispose();
+        return mSubscriber == null || mSubscriber.isDisposed();
     }
 
     @Override
     protected void onForceLoad() {
         super.onForceLoad();
-        unsubscribe();
+        dispose();
         subscribe();
     }
 
@@ -115,22 +101,49 @@ public class RxLoader<T> extends Loader<T> implements Observer<T> {
         super.onReset();
         onStopLoading();
         mDataCache = null;
-        mError = null;
-        mCompleted = false;
+        mThrowable = null;
+        mComplete = false;
     }
 
     private void subscribe() {
-        mError = null;
-        mCompleted = false;
-        mSubscription = mObservable
-                .subscribeOn(Schedulers.io())
+        mThrowable = null;
+        mComplete = false;
+        mFlowable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this);
+                .subscribe(createSubscriber());
     }
 
-    private void unsubscribe() {
-        if (mSubscription != null && !mSubscription.isUnsubscribed()) {
-            mSubscription.unsubscribe();
+    private void dispose() {
+        if (mSubscriber != null && !mSubscriber.isDisposed()) {
+            mSubscriber.dispose();
         }
+    }
+
+    private DisposableSubscriber<T> createSubscriber() {
+        if (mSubscriber == null || mSubscriber.isDisposed()) {
+            mSubscriber = new DisposableSubscriber<T>() {
+
+                @Override
+                public void onNext(T t) {
+                    deliverResult(t);
+                }
+
+                @Override
+                public void onError(Throwable t) {
+                    mThrowable = t;
+                    deliverResult(null);
+                    dispose();
+                }
+
+                @Override
+                public void onComplete() {
+                    mComplete = true;
+                    deliverResult(null);
+                    dispose();
+                }
+            };
+        }
+
+        return mSubscriber;
     }
 }
