@@ -21,6 +21,7 @@ import android.content.Loader;
 import android.os.Bundle;
 
 import io.reactivex.Flowable;
+import io.reactivex.Observable;
 import io.reactivex.processors.BehaviorProcessor;
 
 public class RxLoaderCallbacks<T> implements LoaderManager.LoaderCallbacks<T> {
@@ -30,6 +31,10 @@ public class RxLoaderCallbacks<T> implements LoaderManager.LoaderCallbacks<T> {
 
     public Flowable<T> getFlowable() {
         return createProcessor();
+    }
+
+    public Observable<T> getObservable() {
+        return createProcessor().toObservable();
     }
 
     public RxLoaderCallbacks(RxLoader<T> loader) {
@@ -67,7 +72,7 @@ public class RxLoaderCallbacks<T> implements LoaderManager.LoaderCallbacks<T> {
         mProcessor.onComplete();
     }
 
-    private BehaviorProcessor<T> createProcessor() {
+    private synchronized BehaviorProcessor<T> createProcessor() {
         if (mProcessor == null || mProcessor.hasComplete()) {
             mProcessor = BehaviorProcessor.create();
         }
