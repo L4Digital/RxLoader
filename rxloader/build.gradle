@@ -21,7 +21,7 @@ apply plugin: 'maven-publish'
 def libraryName = 'RxLoader'
 def libraryArtifact = 'rxloader'
 def libraryGroup = 'com.l4digital.rxloader'
-def libraryVersion = '2.0.0-RC1'
+def libraryVersion = '2.0.0-RC2'
 
 android {
     compileSdkVersion 24
@@ -39,7 +39,7 @@ android {
 }
 
 dependencies {
-    compile 'io.reactivex.rxjava2:rxjava:2.0.0-RC3'
+    compile 'io.reactivex.rxjava2:rxjava:2.0.0-RC4'
     compile 'io.reactivex.rxjava2:rxandroid:2.0.0-RC1'
 }
 
@@ -70,7 +70,29 @@ publishing {
             artifact("$buildDir/outputs/aar/${artifactId}-release.aar")
 
             pom.withXml {
-                // ignore dependencies to force consumers to specify version
+                def dependencies = asNode().appendNode('dependencies')
+
+                configurations.getByName("_releaseCompile").allDependencies.each {
+                    def dependency = dependencies.appendNode('dependency')
+
+                    dependency.appendNode('groupId', it.group)
+                    dependency.appendNode('artifactId', it.name)
+                    dependency.appendNode('version', it.version)
+
+                    if (it.excludeRules.size() > 0) {
+                        def exclusions = dependency.appendNode('exclusions')
+
+                        it.excludeRules.each { ExcludeRule rule ->
+                            def exclusion = exclusions.appendNode('exclusion')
+
+                            exclusion.appendNode('groupId', rule.group)
+
+                            if (rule.module != null) {
+                                exclusion.appendNode('artifactId', rule.module)
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -99,6 +121,7 @@ bintray {
 
         version {
             name = libraryVersion
+            vcsTag = libraryVersion
             released = new Date()
         }
     }

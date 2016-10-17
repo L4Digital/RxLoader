@@ -119,7 +119,7 @@ public class RxLoader<T> extends Loader<T> {
         }
     }
 
-    private DisposableSubscriber<T> createSubscriber() {
+    private synchronized DisposableSubscriber<T> createSubscriber() {
         if (mSubscriber == null || mSubscriber.isDisposed()) {
             mSubscriber = new DisposableSubscriber<T>() {
 
