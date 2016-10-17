@@ -67,7 +67,7 @@ public class RxLoaderCallbacks<T> implements LoaderManager.LoaderCallbacks<T> {
         mSubject.onCompleted();
     }
 
-    private BehaviorSubject<T> createSubject() {
+    private synchronized BehaviorSubject<T> createSubject() {
         if (mSubject == null || mSubject.hasCompleted()) {
             mSubject = BehaviorSubject.create();
         }

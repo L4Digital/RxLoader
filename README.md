@@ -1,7 +1,7 @@
 #RxLoader
 [![License](http://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat-square)](http://www.apache.org/licenses/LICENSE-2.0)
 [![API](https://img.shields.io/badge/API-16%2B-blue.svg?style=flat-square)](https://developer.android.com/about/versions/android-4.1.html)
-[![Download](https://img.shields.io/badge/JCenter-1.0.2-brightgreen.svg?style=flat-square)](https://bintray.com/l4digital/maven/RxLoader/_latestVersion)
+[![Download](https://img.shields.io/badge/JCenter-1.0.3-brightgreen.svg?style=flat-square)](https://bintray.com/l4digital/maven/RxLoader/_latestVersion)
 
 An Android Loader that wraps an RxJava Observable.
 
@@ -14,7 +14,7 @@ RxLoader caches the data emitted by your Observable across orientation changes b
 ####Gradle:
 ~~~groovy
 dependencies {
-    compile 'com.l4digital.rxloader:rxloader:1.0.2'
+    compile 'com.l4digital.rxloader:rxloader:1.0.3'
 }
 ~~~
 
@@ -23,7 +23,7 @@ dependencies {
 <dependency>
   <groupId>com.l4digital.rxloader</groupId>
   <artifactId>rxloader</artifactId>
-  <version>1.0.2</version>
+  <version>1.0.3</version>
 </dependency>
 ~~~
 
