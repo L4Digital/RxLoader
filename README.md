@@ -1,4 +1,4 @@
-#RxLoader
+# RxLoader
 [![License](http://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat-square)](http://www.apache.org/licenses/LICENSE-2.0)
 [![API](https://img.shields.io/badge/API-16%2B-blue.svg?style=flat-square)](https://developer.android.com/about/versions/android-4.1.html)
 [![Download](https://img.shields.io/badge/JCenter-1.0.3-brightgreen.svg?style=flat-square)](https://bintray.com/l4digital/maven/RxLoader/_latestVersion)
@@ -9,16 +9,16 @@ RxLoader caches the data emitted by your Observable across orientation changes b
 
 
 
-##Download
+## Download
 
-####Gradle:
+#### Gradle:
 ~~~groovy
 dependencies {
     compile 'com.l4digital.rxloader:rxloader:1.0.3'
 }
 ~~~
 
-####Maven:
+#### Maven:
 ~~~xml
 <dependency>
   <groupId>com.l4digital.rxloader</groupId>
@@ -29,7 +29,7 @@ dependencies {
 
 
 
-##Usage
+## Usage
 ~~~java
 @Override
 protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +46,7 @@ protected void onCreate(Bundle savedInstanceState) {
 
 
 
-##License
+## License
     Copyright 2016 L4 Digital LLC. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License");

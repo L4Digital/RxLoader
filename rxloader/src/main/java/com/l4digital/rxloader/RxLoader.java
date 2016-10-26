@@ -35,6 +35,11 @@ public class RxLoader<T> extends Loader<T> implements Observer<T> {
 
     public RxLoader(Context context, Observable<T> observable) {
         super(context);
+
+        if (observable == null) {
+            throw new NullPointerException("observable cannot be null");
+        }
+
         mObservable = observable;
     }
 

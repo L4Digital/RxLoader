@@ -33,6 +33,10 @@ public class RxLoaderCallbacks<T> implements LoaderManager.LoaderCallbacks<T> {
     }
 
     public RxLoaderCallbacks(RxLoader<T> loader) {
+        if (loader == null) {
+            throw new NullPointerException("loader cannot be null");
+        }
+
         mLoader = loader;
     }
 
