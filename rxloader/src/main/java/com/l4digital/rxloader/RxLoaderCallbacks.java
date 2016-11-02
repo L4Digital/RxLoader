@@ -68,7 +68,9 @@ public class RxLoaderCallbacks<T> implements LoaderManager.LoaderCallbacks<T> {
             }
         }
 
-        mProcessor.onNext(t);
+        if (t != null) {
+            mProcessor.onNext(t);
+        }
     }
 
     @Override
