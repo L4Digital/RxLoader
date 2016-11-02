@@ -20,16 +20,21 @@ import android.app.LoaderManager;
 import android.content.Loader;
 import android.os.Bundle;
 
-import rx.Observable;
-import rx.subjects.BehaviorSubject;
+import io.reactivex.Flowable;
+import io.reactivex.Observable;
+import io.reactivex.processors.BehaviorProcessor;
 
 public class RxLoaderCallbacks<T> implements LoaderManager.LoaderCallbacks<T> {
 
     private final RxLoader<T> mLoader;
-    private BehaviorSubject<T> mSubject;
+    private BehaviorProcessor<T> mProcessor;
+
+    public Flowable<T> getFlowable() {
+        return createProcessor();
+    }
 
     public Observable<T> getObservable() {
-        return createSubject().asObservable();
+        return createProcessor().toObservable();
     }
 
     public RxLoaderCallbacks(RxLoader<T> loader) {
@@ -42,7 +47,7 @@ public class RxLoaderCallbacks<T> implements LoaderManager.LoaderCallbacks<T> {
 
     @Override
     public RxLoader<T> onCreateLoader(int id, Bundle bundle) {
-        createSubject();
+        createProcessor();
         return mLoader;
     }
 
@@ -53,29 +58,29 @@ public class RxLoaderCallbacks<T> implements LoaderManager.LoaderCallbacks<T> {
             Throwable error = rxLoader.getError();
 
             if (error != null) {
-                mSubject.onError(error);
+                mProcessor.onError(error);
                 return;
             }
 
-            if (rxLoader.hasCompleted()) {
-                mSubject.onCompleted();
+            if (rxLoader.hasComplete()) {
+                mProcessor.onComplete();
                 return;
             }
         }
 
-        mSubject.onNext(t);
+        mProcessor.onNext(t);
     }
 
     @Override
     public void onLoaderReset(Loader<T> loader) {
-        mSubject.onCompleted();
+        mProcessor.onComplete();
     }
 
-    private synchronized BehaviorSubject<T> createSubject() {
-        if (mSubject == null || mSubject.hasCompleted()) {
-            mSubject = BehaviorSubject.create();
+    private synchronized BehaviorProcessor<T> createProcessor() {
+        if (mProcessor == null || mProcessor.hasComplete()) {
+            mProcessor = BehaviorProcessor.create();
         }
 
-        return mSubject;
+        return mProcessor;
     }
 }
