@@ -22,31 +22,25 @@ import android.support.annotation.NonNull;
 
 import com.l4digital.reactivex.LoaderSubscriber;
 
-import io.reactivex.BackpressureStrategy;
-import io.reactivex.Flowable;
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class RxLoader<T> extends Loader<T> {
 
-    private final Flowable<T> mFlowable;
+    private final Observable<T> mObservable;
     private LoaderSubscriber<T> mSubscriber;
     private T mDataCache;
 
     public RxLoader(Context context, @NonNull Observable<T> observable) {
-        this(context, observable.toFlowable(BackpressureStrategy.LATEST));
-    }
-
-    public RxLoader(Context context, @NonNull Flowable<T> flowable) {
         super(context);
 
         //noinspection ConstantConditions
-        if (flowable == null) {
-            throw new NullPointerException("flowable cannot be null");
+        if (observable == null) {
+            throw new NullPointerException("observable cannot be null");
         }
 
-        mFlowable = flowable;
+        mObservable = observable;
     }
 
     @Override
@@ -62,8 +56,8 @@ public class RxLoader<T> extends Loader<T> {
         return mSubscriber != null ? mSubscriber.getError() : null;
     }
 
-    public boolean hasComplete() {
-        return mSubscriber != null && mSubscriber.isComplete();
+    public boolean hasCompleted() {
+        return mSubscriber != null && mSubscriber.isCompleted();
     }
 
     @Override
@@ -85,20 +79,19 @@ public class RxLoader<T> extends Loader<T> {
     @Override
     protected void onStopLoading() {
         super.onStopLoading();
-        dispose();
+        unsubscribe();
     }
 
     @Override
     protected boolean onCancelLoad() {
         super.onCancelLoad();
-        dispose();
-        return mSubscriber == null || mSubscriber.isDisposed();
+        unsubscribe();
+        return mSubscriber == null || mSubscriber.isUnsubscribed();
     }
 
     @Override
     protected void onForceLoad() {
         super.onForceLoad();
-        dispose();
         subscribe();
     }
 
@@ -118,19 +111,19 @@ public class RxLoader<T> extends Loader<T> {
             mSubscriber.reset();
         }
 
-        mFlowable.subscribeOn(Schedulers.io())
+        mObservable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(createSubscriber());
     }
 
-    private void dispose() {
-        if (mSubscriber != null && !mSubscriber.isDisposed()) {
-            mSubscriber.dispose();
+    private void unsubscribe() {
+        if (mSubscriber != null && !mSubscriber.isUnsubscribed()) {
+            mSubscriber.unsubscribe();
         }
     }
 
     private synchronized LoaderSubscriber<T> createSubscriber() {
-        if (mSubscriber == null || mSubscriber.isDisposed()) {
+        if (mSubscriber == null || mSubscriber.isUnsubscribed()) {
             mSubscriber = new LoaderSubscriber<T>() {
 
                 @Override
@@ -145,8 +138,8 @@ public class RxLoader<T> extends Loader<T> {
                 }
 
                 @Override
-                public void onComplete() {
-                    super.onComplete();
+                public void onCompleted() {
+                    super.onCompleted();
                     deliverResult(null);
                 }
             };

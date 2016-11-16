@@ -18,38 +18,38 @@ package com.l4digital.reactivex;
 
 import android.support.annotation.CallSuper;
 
-import io.reactivex.subscribers.DisposableSubscriber;
+import rx.Subscriber;
 
-public abstract class LoaderSubscriber<T> extends DisposableSubscriber<T> {
+public abstract class LoaderSubscriber<T> extends Subscriber<T> {
 
     private Throwable mThrowable;
-    private boolean mComplete;
+    private boolean mCompleted;
 
     @CallSuper
     @Override
     public void onError(Throwable t) {
         mThrowable = t;
-        dispose();
+        unsubscribe();
     }
 
     @CallSuper
     @Override
-    public void onComplete() {
-        mComplete = true;
-        dispose();
+    public void onCompleted() {
+        mCompleted = true;
+        unsubscribe();
     }
 
     public Throwable getError() {
         return mThrowable;
     }
 
-    public boolean isComplete() {
-        return mComplete;
+    public boolean isCompleted() {
+        return mCompleted;
     }
 
     public void reset() {
-        dispose();
+        unsubscribe();
         mThrowable = null;
-        mComplete = false;
+        mCompleted = false;
     }
 }

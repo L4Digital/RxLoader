@@ -16,4 +16,7 @@
 #   public *;
 #}
 
--dontwarn io.reactivex.internal.**
+-dontwarn rx.internal.**
+
+## rx java
+-keep class rx.internal.util.unsafe.** { *; }

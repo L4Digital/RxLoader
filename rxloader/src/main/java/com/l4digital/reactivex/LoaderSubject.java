@@ -16,27 +16,22 @@
 
 package com.l4digital.reactivex;
 
-import io.reactivex.Flowable;
-import io.reactivex.Observable;
-import io.reactivex.processors.BehaviorProcessor;
+import rx.Observable;
+import rx.subjects.BehaviorSubject;
 
-public abstract class LoaderProcessor<T> {
+public abstract class LoaderSubject<T> {
 
-    protected BehaviorProcessor<T> mProcessor;
-
-    public Flowable<T> getFlowable() {
-        return createProcessor();
-    }
+    protected BehaviorSubject<T> mSubject;
 
     public Observable<T> getObservable() {
-        return createProcessor().toObservable();
+        return createSubject();
     }
 
-    protected synchronized BehaviorProcessor<T> createProcessor() {
-        if (mProcessor == null || mProcessor.hasComplete()) {
-            mProcessor = BehaviorProcessor.create();
+    protected synchronized BehaviorSubject<T> createSubject() {
+        if (mSubject == null || mSubject.hasCompleted()) {
+            mSubject = BehaviorSubject.create();
         }
 
-        return mProcessor;
+        return mSubject;
     }
 }

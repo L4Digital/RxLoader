@@ -21,9 +21,9 @@ import android.content.Loader;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 
-import com.l4digital.reactivex.LoaderProcessor;
+import com.l4digital.reactivex.LoaderSubject;
 
-public class RxLoaderCallbacks<T> extends LoaderProcessor<T> implements LoaderManager.LoaderCallbacks<T> {
+public class RxLoaderCallbacks<T> extends LoaderSubject<T> implements LoaderManager.LoaderCallbacks<T> {
 
     private final RxLoader<T> mLoader;
 
@@ -38,7 +38,7 @@ public class RxLoaderCallbacks<T> extends LoaderProcessor<T> implements LoaderMa
 
     @Override
     public RxLoader<T> onCreateLoader(int id, Bundle bundle) {
-        createProcessor();
+        createSubject();
         return mLoader;
     }
 
@@ -49,23 +49,23 @@ public class RxLoaderCallbacks<T> extends LoaderProcessor<T> implements LoaderMa
             Throwable error = rxLoader.getError();
 
             if (error != null) {
-                mProcessor.onError(error);
+                mSubject.onError(error);
                 return;
             }
 
-            if (rxLoader.hasComplete()) {
-                mProcessor.onComplete();
+            if (rxLoader.hasCompleted()) {
+                mSubject.onCompleted();
                 return;
             }
         }
 
         if (t != null) {
-            mProcessor.onNext(t);
+            mSubject.onNext(t);
         }
     }
 
     @Override
     public void onLoaderReset(Loader<T> loader) {
-        mProcessor.onComplete();
+        mSubject.onCompleted();
     }
 }

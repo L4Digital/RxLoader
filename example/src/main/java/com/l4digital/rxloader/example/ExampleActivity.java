@@ -26,11 +26,10 @@ import com.l4digital.support.rxloader.RxLoaderCallbacks;
 
 import java.util.concurrent.TimeUnit;
 
-import io.reactivex.Observable;
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Function;
-import io.reactivex.functions.Predicate;
+import rx.Observable;
+import rx.Observer;
+import rx.Subscription;
+import rx.functions.Func1;
 
 public class ExampleActivity extends AppCompatActivity implements Observer<String> {
 
@@ -39,7 +38,7 @@ public class ExampleActivity extends AppCompatActivity implements Observer<Strin
             "Jelly Bean", "KitKat", "Lollipop", "Marshmallow", "Nougat"
     };
 
-    private Disposable mDisposable;
+    private Subscription mSubscription;
     private TextView mExampleText;
 
     @Override
@@ -64,12 +63,6 @@ public class ExampleActivity extends AppCompatActivity implements Observer<Strin
     }
 
     @Override
-    public void onSubscribe(Disposable disposable) {
-        unsubscribe();
-        mDisposable = disposable;
-    }
-
-    @Override
     public void onNext(String value) {
         mExampleText.append(value + "\n");
     }
@@ -80,32 +73,32 @@ public class ExampleActivity extends AppCompatActivity implements Observer<Strin
     }
 
     @Override
-    public void onComplete() {
+    public void onCompleted() {
         findViewById(R.id.progress).setVisibility(View.GONE);
     }
 
     private Observable<String> getObservable() {
         return Observable.interval(500, TimeUnit.MILLISECONDS)
-                .takeWhile(new Predicate<Long>() {
+                .takeWhile(new Func1<Long, Boolean>() {
 
                     @Override
-                    public boolean test(Long tick) throws Exception {
+                    public Boolean call(Long tick) {
                         return tick < sVersionNames.length;
                     }
                 })
-                .map(new Function<Long, String>() {
+                .map(new Func1<Long, String>() {
 
                     @Override
-                    public String apply(Long tick) throws Exception {
+                    public String call(Long tick) {
                         return sVersionNames[tick.intValue()];
                     }
                 });
     }
 
     private void unsubscribe() {
-        if (mDisposable != null && !mDisposable.isDisposed()) {
-            mDisposable.dispose();
-            mDisposable = null;
+        if (mSubscription != null && !mSubscription.isUnsubscribed()) {
+            mSubscription.unsubscribe();
+            mSubscription = null;
         }
     }
 }
