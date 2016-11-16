@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.l4digital.rxloader;
+package com.l4digital.support.rxloader;
 
 import android.content.Context;
-import android.content.Loader;
 import android.support.annotation.NonNull;
+import android.support.v4.content.Loader;
 
 import com.l4digital.reactivex.LoaderSubscriber;
 

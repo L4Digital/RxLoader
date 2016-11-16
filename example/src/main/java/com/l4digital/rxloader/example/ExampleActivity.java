@@ -21,8 +21,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 
-import com.l4digital.rxloader.RxLoader;
-import com.l4digital.rxloader.RxLoaderCallbacks;
+import com.l4digital.support.rxloader.RxLoader;
+import com.l4digital.support.rxloader.RxLoaderCallbacks;
 
 import java.util.concurrent.TimeUnit;
 
@@ -54,7 +54,7 @@ public class ExampleActivity extends AppCompatActivity implements Observer<Strin
 
         callbacks.getObservable().subscribe(this);
 
-        getLoaderManager().initLoader(1, Bundle.EMPTY, callbacks);
+        getSupportLoaderManager().initLoader(1, Bundle.EMPTY, callbacks);
     }
 
     @Override
