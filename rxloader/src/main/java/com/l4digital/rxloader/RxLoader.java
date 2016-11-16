@@ -27,7 +27,6 @@ import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
-import io.reactivex.subscribers.DisposableSubscriber;
 
 public class RxLoader<T> extends Loader<T> {
 
@@ -130,7 +129,7 @@ public class RxLoader<T> extends Loader<T> {
         }
     }
 
-    private synchronized DisposableSubscriber<T> createSubscriber() {
+    private synchronized LoaderSubscriber<T> createSubscriber() {
         if (mSubscriber == null || mSubscriber.isDisposed()) {
             mSubscriber = new LoaderSubscriber<T>() {
 

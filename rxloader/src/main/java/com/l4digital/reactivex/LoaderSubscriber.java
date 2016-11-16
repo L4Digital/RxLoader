@@ -48,6 +48,7 @@ public abstract class LoaderSubscriber<T> extends DisposableSubscriber<T> {
     }
 
     public void reset() {
+        dispose();
         mThrowable = null;
         mComplete = false;
     }
