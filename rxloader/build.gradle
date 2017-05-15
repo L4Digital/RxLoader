@@ -24,12 +24,12 @@ def libraryGroup = 'com.l4digital.rxloader'
 def libraryVersion = '2.0.1'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion '25.0.0'
+    compileSdkVersion rootProject.ext.sdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 25
+        targetSdkVersion rootProject.ext.sdkVersion
 
         versionCode 1
         versionName libraryVersion
@@ -39,8 +39,8 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-fragment:25.0.1'
-    compile 'io.reactivex.rxjava2:rxjava:2.0.1'
+    compile "com.android.support:support-fragment:$supportLibVersion"
+    compile 'io.reactivex.rxjava2:rxjava:2.0.8'
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
 }
 

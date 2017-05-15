@@ -5,4 +5,4 @@
     generateArchives \
     generatePomFileForAarPublication
 
-open rxloader/build/outputs/lint-results-release.html
+open rxloader/build/reports/lint-results-release.html
