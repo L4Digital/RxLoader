@@ -54,7 +54,7 @@ public class ExampleActivity extends AppCompatActivity implements Observer<Strin
 
         callbacks.getObservable().subscribe(this);
 
-        getSupportLoaderManager().initLoader(1, Bundle.EMPTY, callbacks);
+        getSupportLoaderManager().restartLoader(1, Bundle.EMPTY, callbacks);
     }
 
     @Override

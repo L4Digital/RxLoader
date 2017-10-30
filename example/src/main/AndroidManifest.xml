@@ -25,9 +25,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
 
-        <activity
-            android:name=".ExampleActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize">
+        <activity android:name=".ExampleActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
