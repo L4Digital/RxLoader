@@ -40,6 +40,6 @@ android {
 }
 
 dependencies {
-    compile project(':rxloader')
-    compile "com.android.support:appcompat-v7:$supportLibVersion"
+    implementation project(':rxloader')
+    implementation "com.android.support:appcompat-v7:$supportLibVersion"
 }

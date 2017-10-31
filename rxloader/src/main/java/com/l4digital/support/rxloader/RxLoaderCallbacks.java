@@ -44,23 +44,19 @@ public class RxLoaderCallbacks<T> extends LoaderProcessor<T> implements LoaderMa
 
     @Override
     public void onLoadFinished(Loader<T> loader, T t) {
-        if (loader instanceof RxLoader && t == null) {
+        if (t != null) {
+            mProcessor.onNext(t);
+        }
+
+        if (loader instanceof RxLoader) {
             RxLoader rxLoader = (RxLoader) loader;
             Throwable error = rxLoader.getError();
 
             if (error != null) {
                 mProcessor.onError(error);
-                return;
-            }
-
-            if (rxLoader.hasComplete()) {
+            } else if (rxLoader.hasComplete()) {
                 mProcessor.onComplete();
-                return;
             }
-        }
-
-        if (t != null) {
-            mProcessor.onNext(t);
         }
     }
 

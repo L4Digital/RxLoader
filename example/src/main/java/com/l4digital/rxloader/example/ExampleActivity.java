@@ -36,7 +36,7 @@ public class ExampleActivity extends AppCompatActivity implements Observer<Strin
 
     private static final String[] sVersionNames = new String[]{
             "Cupcake", "Donut", "Eclair", "Froyo", "Gingerbread", "Honeycomb", "Ice Cream Sandwich",
-            "Jelly Bean", "KitKat", "Lollipop", "Marshmallow", "Nougat"
+            "Jelly Bean", "KitKat", "Lollipop", "Marshmallow", "Nougat", "Oreo"
     };
 
     private Disposable mDisposable;
@@ -47,14 +47,14 @@ public class ExampleActivity extends AppCompatActivity implements Observer<Strin
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_example);
 
-        mExampleText = (TextView) findViewById(R.id.example_text);
+        mExampleText = findViewById(R.id.example_text);
 
         RxLoader<String> loader = new RxLoader<>(this, getObservable());
         RxLoaderCallbacks<String> callbacks = new RxLoaderCallbacks<>(loader);
 
         callbacks.getObservable().subscribe(this);
 
-        getSupportLoaderManager().restartLoader(1, Bundle.EMPTY, callbacks);
+        getSupportLoaderManager().initLoader(1, Bundle.EMPTY, callbacks);
     }
 
     @Override

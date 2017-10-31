@@ -51,7 +51,9 @@ public class RxLoader<T> extends Loader<T> {
 
     @Override
     public void deliverResult(T data) {
-        mDataCache = data;
+        if (data != null) {
+            mDataCache = data;
+        }
 
         if (isStarted()) {
             super.deliverResult(data);
@@ -147,7 +149,8 @@ public class RxLoader<T> extends Loader<T> {
                 @Override
                 public void onComplete() {
                     super.onComplete();
-                    deliverResult(null);
+                    deliverResult(null); // signal for onComplete
+                    deliverResult(mDataCache); // reset data
                 }
             };
         }
