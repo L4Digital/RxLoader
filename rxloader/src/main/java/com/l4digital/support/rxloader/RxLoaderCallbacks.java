@@ -44,23 +44,19 @@ public class RxLoaderCallbacks<T> extends LoaderSubject<T> implements LoaderMana
 
     @Override
     public void onLoadFinished(Loader<T> loader, T t) {
-        if (loader instanceof RxLoader && t == null) {
+        if (t != null) {
+            mSubject.onNext(t);
+        }
+
+        if (loader instanceof RxLoader) {
             RxLoader rxLoader = (RxLoader) loader;
             Throwable error = rxLoader.getError();
 
             if (error != null) {
                 mSubject.onError(error);
-                return;
-            }
-
-            if (rxLoader.hasCompleted()) {
+            } else if (rxLoader.hasCompleted()) {
                 mSubject.onCompleted();
-                return;
             }
-        }
-
-        if (t != null) {
-            mSubject.onNext(t);
         }
     }
 

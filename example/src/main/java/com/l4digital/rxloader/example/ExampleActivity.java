@@ -35,7 +35,7 @@ public class ExampleActivity extends AppCompatActivity implements Observer<Strin
 
     private static final String[] sVersionNames = new String[]{
             "Cupcake", "Donut", "Eclair", "Froyo", "Gingerbread", "Honeycomb", "Ice Cream Sandwich",
-            "Jelly Bean", "KitKat", "Lollipop", "Marshmallow", "Nougat"
+            "Jelly Bean", "KitKat", "Lollipop", "Marshmallow", "Nougat", "Oreo"
     };
 
     private Subscription mSubscription;
