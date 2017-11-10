@@ -46,7 +46,7 @@ public class ExampleActivity extends AppCompatActivity implements Observer<Strin
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_example);
 
-        mExampleText = (TextView) findViewById(R.id.example_text);
+        mExampleText = findViewById(R.id.example_text);
 
         RxLoader<String> loader = new RxLoader<>(this, getObservable());
         RxLoaderCallbacks<String> callbacks = new RxLoaderCallbacks<>(loader);
