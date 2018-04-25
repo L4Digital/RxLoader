@@ -25,7 +25,6 @@ def libraryVersion = '2.1.0'
 
 android {
     compileSdkVersion rootProject.ext.sdkVersion
-    buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
         minSdkVersion 16
@@ -40,7 +39,7 @@ android {
 
 dependencies {
     api "com.android.support:support-fragment:$supportLibVersion"
-    api 'io.reactivex.rxjava2:rxjava:2.1.4'
+    api 'io.reactivex.rxjava2:rxjava:2.1.7'
     api 'io.reactivex.rxjava2:rxandroid:2.0.1'
 }
 

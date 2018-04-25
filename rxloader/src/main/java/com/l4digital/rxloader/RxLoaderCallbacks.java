@@ -36,6 +36,7 @@ public class RxLoaderCallbacks<T> extends LoaderProcessor<T> implements LoaderMa
         mLoader = loader;
     }
 
+    @NonNull
     @Override
     public RxLoader<T> onCreateLoader(int id, Bundle bundle) {
         createProcessor();
@@ -43,7 +44,7 @@ public class RxLoaderCallbacks<T> extends LoaderProcessor<T> implements LoaderMa
     }
 
     @Override
-    public void onLoadFinished(Loader<T> loader, T t) {
+    public void onLoadFinished(@NonNull Loader<T> loader, T t) {
         if (t != null) {
             mProcessor.onNext(t);
         }
@@ -61,7 +62,7 @@ public class RxLoaderCallbacks<T> extends LoaderProcessor<T> implements LoaderMa
     }
 
     @Override
-    public void onLoaderReset(Loader<T> loader) {
+    public void onLoaderReset(@NonNull Loader<T> loader) {
         mProcessor.onComplete();
     }
 }
